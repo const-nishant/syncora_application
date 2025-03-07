@@ -63,6 +63,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '923699171046',
     projectId: 'syncora-8cd4c',
     storageBucket: 'syncora-8cd4c.firebasestorage.app',
+    iosClientId: '923699171046-rbqqe757hh1kr0v9vsa3s1048iu27t8b.apps.googleusercontent.com',
     iosBundleId: 'com.example.syncoraApplication',
   );
+
 }

@@ -12,7 +12,12 @@
           "package_name": "com.example.syncora_application"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "923699171046-n3pgokbilc21m857lip2f0up1pjpncv4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCMqPMTbACET6Tc2nwiMpSm4Xmihi-bQgc"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "923699171046-n3pgokbilc21m857lip2f0up1pjpncv4.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "923699171046-rbqqe757hh1kr0v9vsa3s1048iu27t8b.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.syncoraApplication"
+              }
+            }
+          ]
         }
       }
     }
