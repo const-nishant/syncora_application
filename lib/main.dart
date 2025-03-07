@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:syncora_application/modules/auth/data/services/authwrapper.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,8 +13,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       // theme: ,
-      // home: ,
+      home: Authwrapper(),
     );
   }
 }
-
