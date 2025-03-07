@@ -2,21 +2,21 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:syncora_application/modules/auth/data/models/usermodel.dart';
+import 'package:provider/provider.dart';
+import 'package:web3dart/web3dart.dart';
+import '../../auth_exports.dart';
 
 class AuthServices extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   User? get user => _auth.currentUser;
   String? get uid => _auth.currentUser?.uid;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  User? getcurrentUser() {
-    return _auth.currentUser;
-  }
-
   Future login(String email, String password, BuildContext context) async {
     _showLoader(context);
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
+      await Provider.of<WalletProvider>(context, listen: false)
+          .loadWalletData();
     } on FirebaseAuthException catch (e) {
       if (context.mounted) {
         _showError(context, e.message ?? 'An error occurred');
@@ -27,6 +27,24 @@ class AuthServices extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Check signup status
+  Future<bool> checkSignupStatus(String uid, BuildContext context) async {
+    try {
+      DocumentSnapshot userSnapshot =
+          await _firestore.collection('users').doc(uid).get();
+
+      if (userSnapshot.exists) {
+        return userSnapshot['isSignup'] ?? false;
+      }
+    } catch (e) {
+      if (context.mounted) {
+        _showError(context, e.toString());
+      }
+    }
+    notifyListeners();
+    return false;
+  }
+
   // Signup function
   Future signup(String username, String email, String password,
       BuildContext context) async {
@@ -35,16 +53,36 @@ class AuthServices extends ChangeNotifier {
       await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
 
-      UserModel user = UserModel(
-        username: username,
-        email: email,
-        uid: _auth.currentUser!.uid,
-        walletAddress: '',
-        menoics: '',
-        notificationId: '',
-        isSignup: true,
-        authProvider: 'email',
-      );
+      final walletProvider =
+          Provider.of<WalletProvider>(context, listen: false);
+      await walletProvider.loadPrivateKey();
+
+      DocumentSnapshot userSnapshot = await _firestore
+          .collection('users')
+          .doc(_auth.currentUser?.uid ?? '')
+          .get();
+      if (!userSnapshot.exists) {
+        await walletProvider.createWallet();
+        String mnemonic = walletProvider.mnemonic ?? '';
+        String walletAddress = walletProvider.walletAddress ?? '';
+        UserModel user = UserModel(
+          username: '',
+          email: _auth.currentUser?.email ?? '',
+          uid: _auth.currentUser?.uid ?? '',
+          walletAddress: walletAddress,
+          menoics: mnemonic,
+          notificationId: '',
+          isSignup: false,
+          authProvider: 'google',
+        );
+        await _firestore
+            .collection('users')
+            .doc(_auth.currentUser?.uid)
+            .set(user.toMap());
+      }
+      if (context.mounted) {
+        Navigator.pop(context); // Close the loader
+      }
     } on FirebaseAuthException catch (e) {
       if (context.mounted) {
         _showError(context, e.message ?? 'An error occurred');
@@ -70,17 +108,24 @@ class AuthServices extends ChangeNotifier {
       );
       await _auth.signInWithCredential(credential);
 
+      final walletProvider =
+          Provider.of<WalletProvider>(context, listen: false);
+      await walletProvider.loadPrivateKey();
+
       DocumentSnapshot userSnapshot = await _firestore
           .collection('users')
           .doc(_auth.currentUser?.uid ?? '')
           .get();
       if (!userSnapshot.exists) {
+        await walletProvider.createWallet();
+        String mnemonic = walletProvider.mnemonic ?? '';
+        String walletAddress = walletProvider.walletAddress ?? '';
         UserModel user = UserModel(
           username: '',
           email: _auth.currentUser?.email ?? '',
           uid: _auth.currentUser?.uid ?? '',
-          walletAddress: '',
-          menoics: '',
+          walletAddress: walletAddress,
+          menoics: mnemonic,
           notificationId: '',
           isSignup: false,
           authProvider: 'google',
@@ -107,7 +152,6 @@ class AuthServices extends ChangeNotifier {
   void _showLoader(BuildContext context) {
     Future.microtask(() {
       showDialog(
-        // ignore: use_build_context_synchronously
         context: context,
         barrierDismissible: false,
         builder: (context) => const Center(child: CircularProgressIndicator()),
@@ -117,7 +161,7 @@ class AuthServices extends ChangeNotifier {
 
   BuildContext? _dialogContext; // Store context of dialog
 
-// Loader for signup
+  // Loader for signup
   void _showSignupLoader(BuildContext context) {
     showDialog(
       context: context,
@@ -129,7 +173,7 @@ class AuthServices extends ChangeNotifier {
     );
   }
 
-// Error function
+  // Error function
   void _showError(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

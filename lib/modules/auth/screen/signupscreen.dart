@@ -72,6 +72,7 @@ class _SignupScreenState extends State<Signupscreen> {
                     "Create a new Account",
                     style: TextStyle(
                       fontSize: 32,
+                      fontFamily: 'FontMain',
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.primary,
                     ),
@@ -84,7 +85,7 @@ class _SignupScreenState extends State<Signupscreen> {
                     keyboardType: TextInputType.name,
                     prefixIcon: Icon(LucideIcons.user),
                     hintText: "Create your username ",
-                    obscureText: obscureText,
+                    obscureText: false,
                     readOnly: false,
                     focusNode: FocusNode(),
                     validator: (value) {
@@ -99,7 +100,7 @@ class _SignupScreenState extends State<Signupscreen> {
                     keyboardType: TextInputType.emailAddress,
                     prefixIcon: Icon(LucideIcons.mail),
                     hintText: "Enter your email",
-                    obscureText: obscureText,
+                    obscureText: false,
                     readOnly: false,
                     focusNode: FocusNode(),
                     validator: (value) {
@@ -170,7 +171,7 @@ class _SignupScreenState extends State<Signupscreen> {
                   SizedBox(
                     height: 16.0,
                   ),
-                  LargeButton(onPressed: () {}, text: "Sign Up"), //signup
+                  LargeButton(onPressed: signup, text: "Sign Up"), //signup
                   SizedBox(
                     height: 6.0,
                   ),

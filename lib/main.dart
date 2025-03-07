@@ -9,7 +9,7 @@ import 'package:syncora_application/modules/auth/data/services/authwrapper.dart'
 import 'package:syncora_application/modules/themes/light_theme.dart';
 import 'package:syncora_application/modules/themes/theme_exports.dart';
 import 'modules/auth/data/services/authservices.dart';
-import 'modules/home/data/services/walletaddressservices.dart';
+import 'modules/auth/data/services/walletaddressservices.dart';
 
 Client client = Client();
 void main() async {

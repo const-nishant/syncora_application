@@ -52,6 +52,7 @@ dependencies:
   lucide_icons_flutter: ^1.2.7
   percent_indicator: ^4.2.4
   google_nav_bar: ^5.0.7
+  carousel_slider: ^5.0.0
 
 dev_dependencies:
   flutter_test:
