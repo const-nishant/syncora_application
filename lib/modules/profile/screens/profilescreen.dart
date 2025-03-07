@@ -3,8 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncora_application/common/large_button.dart';
+
 import '../../auth/auth_exports.dart';
 import '../../themes/theme_provider.dart';
+import 'blocked_users.dart';
 
 class Profilescreen extends StatefulWidget {
   const Profilescreen({super.key});
@@ -209,7 +211,11 @@ class _ProfilescreenState extends State<Profilescreen> {
                             color: Theme.of(context).colorScheme.primary,
                           ),
                           onPressed: () {
-                            // Navigate to blocked users screen
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => const BlockedUsers(),
+                              ),
+                            );
                           },
                         ),
                       ],
