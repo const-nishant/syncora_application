@@ -9,6 +9,10 @@ class AuthServices extends ChangeNotifier {
   User? get user => _auth.currentUser;
   String? get uid => _auth.currentUser?.uid;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  User? getcurrentUser() {
+    return _auth.currentUser;
+  }
+
   Future login(String email, String password, BuildContext context) async {
     _showLoader(context);
     try {
