@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:syncora_application/modules/auth/data/services/loginorsignup.dart';
 import 'package:syncora_application/modules/home/home_export.dart';
-
 import '../../auth_exports.dart';
 
 class Authwrapper extends StatefulWidget {
@@ -24,7 +24,7 @@ class _AuthwrapperState extends State<Authwrapper> {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
-          return Signupscreen();
+          return Loginorsignup();
         }
       },
     );

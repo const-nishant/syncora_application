@@ -24,23 +24,12 @@ class _LargeButtonState extends State<LargeButton> {
         ),
         elevation: 0,
         fixedSize: const Size(500, 50),
-        backgroundColor: Theme.of(context)
-                .elevatedButtonTheme
-                .style
-                ?.backgroundColor
-                ?.resolve({}) ??
-            Color(0x008d4612),
-        foregroundColor: Theme.of(context)
-                .elevatedButtonTheme
-                .style
-                ?.foregroundColor
-                ?.resolve({}) ??
-            Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.onPrimary,
       ),
       child: Text(
         widget.text,
         style: TextStyle(
-            color: Theme.of(context).colorScheme.inversePrimary,
+            color: Theme.of(context).colorScheme.tertiary,
             fontSize: 18,
             fontWeight: FontWeight.w600),
       ),
