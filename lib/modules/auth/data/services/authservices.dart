@@ -11,7 +11,6 @@ class AuthServices extends ChangeNotifier {
   User? get user => _auth.currentUser;
   String? get uid => _auth.currentUser?.uid;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
   Future login(String email, String password, BuildContext context) async {
     _showLoader(context);
     try {
