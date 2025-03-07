@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../consants/images.dart';
+import '../modules/auth/auth_exports.dart';
 
 class ContinueWithGoogle extends StatelessWidget {
   const ContinueWithGoogle({super.key});
@@ -8,8 +10,8 @@ class ContinueWithGoogle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     void continueWithGoogle(BuildContext context) {
-      // Provider.of<AuthServices>(context, listen: false)
-      //     .continueWithGoogle(context);
+      Provider.of<AuthServices>(context, listen: false)
+          .continueWithGoogle(context);
     }
 
     return ElevatedButton(

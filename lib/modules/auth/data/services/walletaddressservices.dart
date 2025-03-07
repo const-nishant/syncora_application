@@ -13,10 +13,12 @@ abstract class WalletAddressService {
 
 class WalletProvider extends ChangeNotifier implements WalletAddressService {
   String? privateKey;
+  String? _mnemonic;
+  String? get mnemonic => _mnemonic;
   String? _walletAddress;
   String? get walletAddress => _walletAddress;
   String balance = '';
-  String? _pvKey ;
+  String? _pvKey;
   String? get pvKey => _pvKey;
 
   Future<void> loadPrivateKey() async {
@@ -27,6 +29,17 @@ class WalletProvider extends ChangeNotifier implements WalletAddressService {
   Future<void> setPrivateKey(String privateKey) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('privateKey', privateKey);
+    notifyListeners();
+  }
+
+  Future<void> createWallet() async {
+    String mnemonic = generateMnemonic();
+    _mnemonic = mnemonic;
+    String privateKey = await getPrivateKey(mnemonic);
+    String publicKey = (await getPublicKey(privateKey)).hex;
+    loadPrivateKey();
+    _walletAddress = publicKey;
+    await setPrivateKey(privateKey);
     notifyListeners();
   }
 

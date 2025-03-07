@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:syncora_application/modules/auth/data/services/loginorsignup.dart';
 import 'package:syncora_application/modules/home/home_export.dart';
 import '../../auth_exports.dart';
@@ -17,14 +18,56 @@ class _AuthwrapperState extends State<Authwrapper> {
     return StreamBuilder(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
-        } else if (snapshot.hasData) {
-          return Homescreen();
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
+        // if (snapshot.connectionState == ConnectionState.waiting) {
+        //   return const Center(
+        //     child: CircularProgressIndicator(),
+        //   );
+        // }
+        //else if (snapshot.hasData) {
+        //   return Consumer<AuthServices>(
+        //     builder: (context, googleUserService, child) {
+        //       return FutureBuilder(
+        //         future: googleUserService.checkNewGoogleUser(
+        //             snapshot.data!.uid, context),
+        //         builder: (context, snapshot) {
+        //           if (snapshot.hasError || !snapshot.hasData) {
+        //             return HomePage();
+        //           } else {
+        //             return snapshot.data! ? const OnboardingPage() : HomePage();
+        //           }
+        //         },
+        //       );
+        //     },
+        //   );
+        // }
+        if (snapshot.hasData) {
+          return Consumer<AuthServices>(
+              builder: (context, authServices, child) {
+            return FutureBuilder(
+                future:
+                    authServices.checkSignupStatus(snapshot.data!.uid, context),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError || !snapshot.hasData) {
+                    return Authwrapper();
+                  } else {
+                    final walletprovider = Provider.of<WalletProvider>(context);
+                    return snapshot.data!
+                        ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text('${walletprovider.mnemonic}'),
+                                Text('${walletprovider.walletAddress}'),
+                                Text('${walletprovider.pvKey}'),
+                              ],
+                            ),
+                          )
+                        : Homescreen();
+                  }
+                });
+          });
         } else {
-          return Loginorsignup();
+          return const Loginorsignup();
         }
       },
     );
