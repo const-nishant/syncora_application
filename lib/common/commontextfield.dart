@@ -7,7 +7,7 @@ class Commontextfield extends StatelessWidget {
   final bool obscureText;
   final bool readOnly;
   final FocusNode focusNode;
-  final int maxLength;
+  final int? maxLength;
   final String? Function(String?)? validator;
   final Function()? onTap;
   final Widget? prefixIcon;
@@ -21,7 +21,7 @@ class Commontextfield extends StatelessWidget {
       required this.obscureText,
       required this.readOnly,
       required this.focusNode,
-      required this.maxLength,
+      this.maxLength,
       this.validator,
       this.onTap,
       this.prefixIcon,
@@ -47,7 +47,7 @@ class Commontextfield extends StatelessWidget {
         prefixIcon: prefixIcon,
         prefixIconColor: Theme.of(context).colorScheme.primary,
         suffixIcon: suffixIcon,
-        suffixIconColor: Colors.black,
+        suffixIconColor: Theme.of(context).colorScheme.primary,
         counterText: "",
         enabledBorder: OutlineInputBorder(
           borderRadius: const BorderRadius.all(Radius.circular(16)),
@@ -60,9 +60,9 @@ class Commontextfield extends StatelessWidget {
         ),
         hintText: hintText,
         hintStyle: TextStyle(
-          color: Theme.of(context).colorScheme.tertiary,
+          color: Theme.of(context).colorScheme.primary,
           fontSize: 16,
-          fontWeight: FontWeight.w400,
+          fontWeight: FontWeight.w500,
         ),
         fillColor: Colors.transparent,
         filled: true,
