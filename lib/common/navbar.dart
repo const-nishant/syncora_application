@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:syncora_application/modules/chat/screens/main_chatscreen.dart';
 import 'package:syncora_application/modules/home/screen/homescreen.dart';
 
 class NavBar extends StatefulWidget {
@@ -19,7 +21,7 @@ class _NavBarState extends State<NavBar> {
 
   final List<Widget> _pages = [
     const Homescreen(), //0th index
-    const Placeholder(), //1th index
+    const MainChatscreen(), //1th index
     const Placeholder(), //2th index
     const Placeholder(), //3th index
     const Placeholder(), //4th index
@@ -30,9 +32,9 @@ class _NavBarState extends State<NavBar> {
     return Scaffold(
       body: _pages[currentIndex],
       bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Color(0xFF6A3200),
-          selectedItemColor: Colors.white,
-          unselectedItemColor: Colors.black,
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          selectedItemColor: Theme.of(context).colorScheme.secondary,
+          unselectedItemColor: Theme.of(context).colorScheme.inversePrimary,
           type: BottomNavigationBarType.fixed,
           currentIndex: currentIndex,
           onTap: goToPage,
@@ -47,10 +49,10 @@ class _NavBarState extends State<NavBar> {
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.add_box_outlined),
-              label: '+',
+              label: 'Add',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.library_books_outlined),
+              icon: Icon(LucideIcons.globe),
               label: 'Explore',
             ),
             BottomNavigationBarItem(

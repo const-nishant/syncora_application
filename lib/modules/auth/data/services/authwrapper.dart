@@ -1,9 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:syncora_application/common/navbar.dart';
 import 'package:syncora_application/modules/auth/screen/memonics_screen.dart';
-import 'package:syncora_application/modules/home/home_export.dart';
-
 import '../../auth_exports.dart';
 
 class Authwrapper extends StatefulWidget {
@@ -52,7 +51,7 @@ class _AuthwrapperState extends State<Authwrapper> {
                     return Authwrapper();
                   } else {
                     // final walletprovider = Provider.of<WalletProvider>(context);
-                    return snapshot.data! ? Homescreen() : MemonicsScreen();
+                    return snapshot.data! ? NavBar() : MemonicsScreen();
                   }
                 });
           });
