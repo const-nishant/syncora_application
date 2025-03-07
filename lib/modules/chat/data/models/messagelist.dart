@@ -19,7 +19,7 @@ class Messagelist extends StatelessWidget {
   Widget build(BuildContext context) {
     final Chatservices chatservice = Chatservices();
     final authservices = Provider.of<AuthServices>(context, listen: false);
-    String senderID = authservices.getcurrentUser()!.uid;
+    String senderID = authservices.getCurrentUser()!.uid;
     return StreamBuilder(
         stream: chatservice.getMessages(senderID, receiverID),
         builder: (context, snapshot) {
@@ -51,7 +51,7 @@ class Messagelist extends StatelessWidget {
     final authservices = Provider.of<AuthServices>(context, listen: false);
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     //is current user
-    bool isCurrentUser = data['senderID'] == authservices.getcurrentUser()!.uid;
+    bool isCurrentUser = data['senderID'] == authservices.getCurrentUser()!.uid;
 
     return Column(
       crossAxisAlignment:
