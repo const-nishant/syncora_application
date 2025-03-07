@@ -93,7 +93,7 @@ flutter:
   fonts:
      - family: FontMain
        fonts:
-         - asset: assets/fonts/MinecraftEvenings-lgvPd
+         - asset: assets/fonts/MinecraftEvenings-lgvPd.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro
