@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class Signupscreen extends StatefulWidget {
-  const Signupscreen({super.key});
+  final void Function()? onTap;
+  const Signupscreen({super.key, this.onTap});
 
   @override
   State<Signupscreen> createState() => _SignupscreenState();
