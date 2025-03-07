@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:syncora_application/modules/auth/data/services/loginorsignup.dart';
 import 'package:syncora_application/modules/home/home_export.dart';
+
 import '../../auth_exports.dart';
 
 class Authwrapper extends StatefulWidget {
