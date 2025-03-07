@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:syncora_application/modules/auth/data/models/usermodel.dart';
 
 class AuthServices extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -27,6 +28,18 @@ class AuthServices extends ChangeNotifier {
     try {
       await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
+
+      UserModel user = UserModel(
+        username: '',
+        email: email,
+        uid: _auth.currentUser!.uid,
+        walletAddress: '',
+        menoics: '',
+        notificationId: '',
+        isSignup: true,
+        authProvider: 'email',
+      );
+
     } on FirebaseAuthException catch (e) {
       if (context.mounted) {
         _showError(context, e.message ?? 'An error occurred');
