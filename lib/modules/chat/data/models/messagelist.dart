@@ -8,6 +8,7 @@ import '../data_exports.dart';
 class Messagelist extends StatelessWidget {
   final ScrollController scrollController;
   final String receiverID;
+
   const Messagelist({
     super.key,
     required this.receiverID,
@@ -18,7 +19,7 @@ class Messagelist extends StatelessWidget {
   Widget build(BuildContext context) {
     final Chatservices chatservice = Chatservices();
     final authservices = Provider.of<AuthServices>(context, listen: false);
-    String senderID = authservices.getCurrentUser()!.uid;
+    String senderID = authservices.getcurrentUser()!.uid;
     return StreamBuilder(
         stream: chatservice.getMessages(senderID, receiverID),
         builder: (context, snapshot) {
@@ -50,11 +51,7 @@ class Messagelist extends StatelessWidget {
     final authservices = Provider.of<AuthServices>(context, listen: false);
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     //is current user
-    bool isCurrentUser = data['senderID'] == authservices.getCurrentUser()!.uid;
-
-    //align message
-    var alignment =
-        isCurrentUser ? Alignment.centerRight : Alignment.centerLeft;
+    bool isCurrentUser = data['senderID'] == authservices.getcurrentUser()!.uid;
 
     return Column(
       crossAxisAlignment:

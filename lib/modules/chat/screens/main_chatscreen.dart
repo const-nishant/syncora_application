@@ -18,7 +18,7 @@ class _MainChatscreenState extends State<MainChatscreen> {
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.grey,
         title: const Text(
-          'Home',
+          'Chats',
           style: TextStyle(
               // color: Colors.white,
               ),

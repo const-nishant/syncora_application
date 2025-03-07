@@ -3,13 +3,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
-import 'package:web3dart/web3dart.dart';
+
 import '../../auth_exports.dart';
 
 class AuthServices extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   User? get user => _auth.currentUser;
   String? get uid => _auth.currentUser?.uid;
+
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Future login(String email, String password, BuildContext context) async {
     _showLoader(context);
@@ -102,8 +103,14 @@ class AuthServices extends ChangeNotifier {
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
+      if (googleUser == null) {
+        // The user canceled the sign-in
+        _dismissLoader(context); // Close the loader
+        return;
+      }
+
       final GoogleSignInAuthentication googleAuth =
-          await googleUser!.authentication;
+          await googleUser.authentication;
 
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
@@ -143,10 +150,7 @@ class AuthServices extends ChangeNotifier {
         _showError(context, e.message ?? 'An error occurred');
       }
     } finally {
-      if (_dialogContext != null && _dialogContext!.mounted) {
-        Navigator.pop(_dialogContext!); // Close the loader
-        _dialogContext = null; // Reset after closing
-      }
+      _dismissLoader(context); // Close the loader
     }
 
     notifyListeners();
@@ -174,6 +178,14 @@ class AuthServices extends ChangeNotifier {
         return const Center(child: CircularProgressIndicator());
       },
     );
+  }
+
+  // Dismiss loader
+  void _dismissLoader(BuildContext context) {
+    if (_dialogContext != null && Navigator.canPop(_dialogContext!)) {
+      Navigator.pop(_dialogContext!);
+      _dialogContext = null; // Reset after closing
+    }
   }
 
   // Error function

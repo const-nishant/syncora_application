@@ -8,8 +8,10 @@ import 'package:syncora_application/firebase_options.dart';
 import 'package:syncora_application/modules/auth/data/services/authwrapper.dart';
 import 'package:syncora_application/modules/themes/light_theme.dart';
 import 'package:syncora_application/modules/themes/theme_exports.dart';
+
 import 'modules/auth/data/services/authservices.dart';
 import 'modules/auth/data/services/walletaddressservices.dart';
+import 'modules/themes/theme_provider.dart';
 
 Client client = Client();
 void main() async {
@@ -26,7 +28,12 @@ void main() async {
         ChangeNotifierProvider(
           create: (_) => AuthServices(),
         ),
-        ChangeNotifierProvider(create: (_) => WalletProvider()),
+        ChangeNotifierProvider(
+          create: (_) => WalletProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => ThemeProvider(),
+        ),
       ],
       child: Phoenix(
         child: MyApp(),
