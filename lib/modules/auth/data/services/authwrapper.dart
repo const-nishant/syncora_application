@@ -13,51 +13,42 @@ class Authwrapper extends StatefulWidget {
 }
 
 class _AuthwrapperState extends State<Authwrapper> {
+  Future<bool>? _signupStatusFuture;
+
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
+    return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
-        // if (snapshot.connectionState == ConnectionState.waiting) {
-        //   return const Center(
-        //     child: CircularProgressIndicator(),
-        //   );
-        // }
-        //else if (snapshot.hasData) {
-        //   return Consumer<AuthServices>(
-        //     builder: (context, googleUserService, child) {
-        //       return FutureBuilder(
-        //         future: googleUserService.checkNewGoogleUser(
-        //             snapshot.data!.uid, context),
-        //         builder: (context, snapshot) {
-        //           if (snapshot.hasError || !snapshot.hasData) {
-        //             return HomePage();
-        //           } else {
-        //             return snapshot.data! ? const OnboardingPage() : HomePage();
-        //           }
-        //         },
-        //       );
-        //     },
-        //   );
-        // }
-        if (snapshot.hasData) {
-          return Consumer<AuthServices>(
-              builder: (context, authServices, child) {
-            return FutureBuilder(
-                future:
-                    authServices.checkSignupStatus(snapshot.data!.uid, context),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError || !snapshot.hasData) {
-                    return Authwrapper();
-                  } else {
-                    // final walletprovider = Provider.of<WalletProvider>(context);
-                    return snapshot.data! ? NavBar() : MemonicsScreen();
-                  }
-                });
-          });
-        } else {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        final user = snapshot.data;
+        if (user == null) {
           return const Loginorsignup();
         }
+
+        final authServices = Provider.of<AuthServices>(context, listen: false);
+
+        // Cache the Future to prevent unnecessary calls
+        _signupStatusFuture ??=
+            authServices.checkSignupStatus(user.uid, context);
+
+        return FutureBuilder<bool>(
+          future: _signupStatusFuture,
+          builder: (context, futureSnapshot) {
+            if (futureSnapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (futureSnapshot.hasError || !futureSnapshot.hasData) {
+              return const Loginorsignup();
+            }
+
+            return futureSnapshot.data! ? NavBar() : MemonicsScreen();
+          },
+        );
       },
     );
   }

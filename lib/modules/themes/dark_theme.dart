@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 
 ThemeData darkTheme = ThemeData(
-  colorScheme: ColorScheme.light(
-    surface: Colors.grey.shade900,
-    primary: Colors.grey.shade600,
-    secondary: Colors.grey.shade700,
-    tertiary: const Color.fromARGB(255, 57, 57, 57),
-    inversePrimary: Colors.grey.shade300,
-  ),
-  dialogTheme: DialogTheme(
-    titleTextStyle: TextStyle(
-      color: Colors.grey.shade600,
+    colorScheme: ColorScheme.light(
+      surface: Colors.grey.shade900,
+      primary: Colors.grey.shade600,
+      onPrimary: Color(0xFF00AA00),
+      secondary: Colors.grey.shade700,
+      tertiary: const Color.fromARGB(255, 57, 57, 57),
+      inversePrimary: Colors.grey.shade300,
     ),
-    contentTextStyle: TextStyle(
-      color: Colors.grey.shade600,
+    dialogTheme: DialogTheme(
+      titleTextStyle: TextStyle(
+        color: Colors.grey.shade600,
+      ),
+      contentTextStyle: TextStyle(
+        color: Colors.grey.shade600,
+      ),
+      backgroundColor: Colors.grey.shade900,
     ),
-    backgroundColor: Colors.grey.shade900,
-  ),
-  iconTheme: IconThemeData(
-    color: Colors.grey.shade200,
-  )
-);
+    iconTheme: IconThemeData(
+      color: Colors.grey.shade200,
+    ));

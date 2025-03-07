@@ -45,7 +45,7 @@ class _MemonicsScreenState extends State<MemonicsScreen> {
                 "Save your recovery Phrase",
                 style: TextStyle(
                   fontFamily: 'fontMain',
-                  fontSize: 22,
+                  fontSize: 24,
                   color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.bold,
                 ),
@@ -122,9 +122,10 @@ class _MemonicsScreenState extends State<MemonicsScreen> {
             // "Click to Copy" Text
             TextButton(
               onPressed: () => copytoClipboard(mnemonic ?? ''),
-              child: const Text(
+              child: Text(
                 "click to copy",
-                style: TextStyle(fontSize: 16, color: Colors.black),
+                style: TextStyle(
+                    fontSize: 16, color: Theme.of(context).colorScheme.primary),
               ),
             ),
             const SizedBox(height: 20),

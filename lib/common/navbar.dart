@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:syncora_application/modules/chat/screens/main_chatscreen.dart';
 import 'package:syncora_application/modules/home/screen/homescreen.dart';
+import 'package:syncora_application/modules/profile/screens/profilescreen.dart';
 
 class NavBar extends StatefulWidget {
   const NavBar({super.key});
@@ -24,7 +25,7 @@ class _NavBarState extends State<NavBar> {
     const MainChatscreen(), //1th index
     const Placeholder(), //2th index
     const Placeholder(), //3th index
-    const Placeholder(), //4th index
+    const Profilescreen(), //4th index
   ];
 
   @override

@@ -6,9 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:syncora_application/config/configs.dart';
 import 'package:syncora_application/firebase_options.dart';
 import 'package:syncora_application/modules/auth/data/services/authwrapper.dart';
-import 'package:syncora_application/modules/themes/light_theme.dart';
-import 'package:syncora_application/modules/themes/theme_exports.dart';
-
 import 'modules/auth/data/services/authservices.dart';
 import 'modules/auth/data/services/walletaddressservices.dart';
 import 'modules/themes/theme_provider.dart';
@@ -50,7 +47,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Syncora',
       debugShowCheckedModeBanner: false,
-      theme: lightTheme,
+      theme: Provider.of<ThemeProvider>(context).themeData,
       home: Authwrapper(),
     );
   }

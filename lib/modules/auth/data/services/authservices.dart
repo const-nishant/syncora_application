@@ -31,6 +31,14 @@ class AuthServices extends ChangeNotifier {
   //get current user
   User? getCurrentUser() => _auth.currentUser;
 
+  //get wallet address
+  Stream<DocumentSnapshot> getUserDataStream() {
+    return _firestore
+        .collection('users')
+        .doc(_auth.currentUser?.uid)
+        .snapshots();
+  }
+
   //get menoics
   Future<String?> getmenoics() async {
     DocumentSnapshot userSnapshot =
@@ -48,19 +56,17 @@ class AuthServices extends ChangeNotifier {
   // Check signup status
   Future<bool> checkSignupStatus(String uid, BuildContext context) async {
     try {
-      DocumentSnapshot userSnapshot =
-          await _firestore.collection('users').doc(uid).get();
+      final docSnapshot = await _firestore.collection('users').doc(uid).get();
 
-      if (userSnapshot.exists) {
-        return userSnapshot['isSignup'] ?? false;
+      if (docSnapshot.exists) {
+        final data = docSnapshot.data();
+        return data?['isSignup'] ?? false;
       }
+      return false;
     } catch (e) {
-      if (context.mounted) {
-        _showError(context, e.toString());
-      }
+      debugPrint('Error fetching signup status: $e');
+      return false;
     }
-    notifyListeners();
-    return false;
   }
 
   // Signup function
@@ -84,7 +90,7 @@ class AuthServices extends ChangeNotifier {
         String mnemonic = walletProvider.mnemonic ?? '';
         String walletAddress = walletProvider.walletAddress ?? '';
         UserModel user = UserModel(
-          username: '',
+          username: username,
           email: _auth.currentUser?.email ?? '',
           uid: _auth.currentUser?.uid ?? '',
           walletAddress: walletAddress,
@@ -98,18 +104,18 @@ class AuthServices extends ChangeNotifier {
             .doc(_auth.currentUser?.uid)
             .set(user.toMap());
       }
+    } catch (e) {
       if (context.mounted) {
-        Navigator.pop(context); // Close the loader
-      }
-    } on FirebaseAuthException catch (e) {
-      if (context.mounted) {
-        _showError(context, e.message ?? 'An error occurred');
+        _showError(context, e.toString());
       }
     } finally {
-      if (context.mounted) {
+      if (_dialogContext != null && _dialogContext!.mounted) {
         Navigator.pop(_dialogContext!); // Close the loader
+        _dialogContext = null; // Reset after closing
       }
     }
+
+    notifyListeners();
   }
 
 // Google Signin
@@ -146,7 +152,7 @@ class AuthServices extends ChangeNotifier {
         String mnemonic = walletProvider.mnemonic ?? '';
         String walletAddress = walletProvider.walletAddress ?? '';
         UserModel user = UserModel(
-          username: '',
+          username: googleUser.displayName ?? '',
           email: _auth.currentUser?.email ?? '',
           uid: _auth.currentUser?.uid ?? '',
           walletAddress: walletAddress,
