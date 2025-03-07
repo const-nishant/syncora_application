@@ -27,6 +27,9 @@ class AuthServices extends ChangeNotifier {
     notifyListeners();
   }
 
+  //get current user
+  User? getCurrentUser() => _auth.currentUser;
+
   // Check signup status
   Future<bool> checkSignupStatus(String uid, BuildContext context) async {
     try {

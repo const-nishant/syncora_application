@@ -92,7 +92,7 @@ class _HomescreenState extends State<Homescreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const Helpchatbot(),
+              builder: (context) => const HelpChatbot(),
             ),
           );
         },

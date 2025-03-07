@@ -42,7 +42,7 @@ class UserList extends StatelessWidget {
       BuildContext context, Map<String, dynamic> userData) {
     //display all users except current user
     final authservices = Provider.of<AuthServices>(context, listen: false);
-    if (userData['email'] != authservices.getcurrentUser()!.email) {
+    if (userData['email'] != authservices.getCurrentUser()!.email) {
       return UserTile(
         username: userData['username'],
         onTap: () {
