@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../consants/images.dart';
+import '../constants/images.dart';
 import '../modules/auth/auth_exports.dart';
 
 class ContinueWithGoogle extends StatelessWidget {

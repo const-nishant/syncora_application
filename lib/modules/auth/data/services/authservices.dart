@@ -31,6 +31,20 @@ class AuthServices extends ChangeNotifier {
   //get current user
   User? getCurrentUser() => _auth.currentUser;
 
+  //get menoics
+  Future<String?> getmenoics() async {
+    DocumentSnapshot userSnapshot =
+        await _firestore.collection('users').doc(_auth.currentUser?.uid).get();
+    return userSnapshot['menoics'];
+  }
+
+  //chnage sign up status
+  Future<void> changeSignupStatus(bool status) async {
+    await _firestore.collection('users').doc(_auth.currentUser?.uid).update({
+      'isSignup': status,
+    });
+  }
+
   // Check signup status
   Future<bool> checkSignupStatus(String uid, BuildContext context) async {
     try {
@@ -77,7 +91,7 @@ class AuthServices extends ChangeNotifier {
           menoics: mnemonic,
           notificationId: '',
           isSignup: false,
-          authProvider: 'google',
+          authProvider: 'email',
         );
         await _firestore
             .collection('users')
@@ -98,6 +112,7 @@ class AuthServices extends ChangeNotifier {
     }
   }
 
+// Google Signin
   Future<dynamic> continueWithGoogle(BuildContext context) async {
     _showSignupLoader(context);
     try {

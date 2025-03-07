@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:syncora_application/modules/auth/screen/memonics_screen.dart';
 import 'package:syncora_application/modules/home/home_export.dart';
 
 import '../../auth_exports.dart';
@@ -50,19 +51,8 @@ class _AuthwrapperState extends State<Authwrapper> {
                   if (snapshot.hasError || !snapshot.hasData) {
                     return Authwrapper();
                   } else {
-                    final walletprovider = Provider.of<WalletProvider>(context);
-                    return snapshot.data!
-                        ? Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text('${walletprovider.mnemonic}'),
-                                Text('${walletprovider.walletAddress}'),
-                                Text('${walletprovider.pvKey}'),
-                              ],
-                            ),
-                          )
-                        : Homescreen();
+                    // final walletprovider = Provider.of<WalletProvider>(context);
+                    return snapshot.data! ? Homescreen() : MemonicsScreen();
                   }
                 });
           });

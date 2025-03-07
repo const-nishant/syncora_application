@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:syncora_application/modules/auth/screen/verifymnemonics.dart';
+import '../data/services/authservices.dart';
 
 class MemonicsScreen extends StatefulWidget {
   const MemonicsScreen({super.key});
@@ -8,7 +12,23 @@ class MemonicsScreen extends StatefulWidget {
 }
 
 class _MemonicsScreenState extends State<MemonicsScreen> {
-  final List<String> phrases = List.filled(12, "syncora");
+  late Future<String?> _mnemonicFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _mnemonicFuture =
+        Provider.of<AuthServices>(context, listen: false).getmenoics();
+  }
+
+  String? mnemonic;
+
+  void copytoClipboard(String text) {
+    Clipboard.setData(ClipboardData(text: text));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Copied to clipboard')),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,50 +62,70 @@ class _MemonicsScreenState extends State<MemonicsScreen> {
             const SizedBox(height: 12),
 
             // Recovery Phrase Grid
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey.shade400),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: GridView.builder(
-                itemCount: phrases.length,
-                shrinkWrap: true,
-                physics:
-                    const NeverScrollableScrollPhysics(), // Disable scrolling inside Grid
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3, // 3 columns
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  childAspectRatio: 2.8,
-                ),
-                itemBuilder: (context, index) {
+            FutureBuilder<String?>(
+              future: _mnemonicFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return const Center(child: Text('Error loading mnemonic'));
+                } else if (!snapshot.hasData || snapshot.data == null) {
+                  return const Center(child: Text('No mnemonic found'));
+                } else {
+                  final mnemonic = snapshot.data!;
+                  this.mnemonic = mnemonic;
+                  final mnemonicWords = mnemonic.split(" ");
                   return Container(
+                    padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.green, width: 1),
+                      border: Border.all(color: Colors.grey.shade400),
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Center(
-                      child: Text(
-                        "#${index + 1}. ${phrases[index]}",
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.green,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    child: GridView.builder(
+                      itemCount: mnemonicWords.length,
+                      shrinkWrap: true,
+                      physics:
+                          const NeverScrollableScrollPhysics(), // Disable scrolling inside Grid
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3, // 3 columns
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                        childAspectRatio: 2.8,
                       ),
+                      itemBuilder: (context, index) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.green, width: 1),
+                          ),
+                          child: Center(
+                            child: Text(
+                              "#${index + 1}. ${mnemonicWords[index]}",
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.green,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   );
-                },
-              ),
+                }
+              },
             ),
             const SizedBox(height: 20),
 
             // "Click to Copy" Text
-            const Text(
-              "click to copy",
-              style: TextStyle(fontSize: 16, color: Colors.black),
+            TextButton(
+              onPressed: () => copytoClipboard(mnemonic ?? ''),
+              child: const Text(
+                "click to copy",
+                style: TextStyle(fontSize: 16, color: Colors.black),
+              ),
             ),
             const SizedBox(height: 20),
 
@@ -94,7 +134,10 @@ class _MemonicsScreenState extends State<MemonicsScreen> {
               width: 300,
               child: ElevatedButton(
                 onPressed: () {
-                  // Add navigation or action here
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (context) {
+                    return Verifymnemonics(mnemonic: mnemonic ?? '');
+                  }));
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
@@ -110,20 +153,6 @@ class _MemonicsScreenState extends State<MemonicsScreen> {
               ),
             ),
             const SizedBox(height: 12),
-
-            // Skip Button
-            TextButton(
-              onPressed: () {
-                // Skip action
-              },
-              child: Text(
-                "skip",
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
-            ),
           ],
         ),
       ),
