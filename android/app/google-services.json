@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "923699171046",
+    "project_id": "syncora-8cd4c",
+    "storage_bucket": "syncora-8cd4c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:923699171046:android:5ef58d21b528609e4f3527",
+        "android_client_info": {
+          "package_name": "com.example.syncora_application"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCMqPMTbACET6Tc2nwiMpSm4Xmihi-bQgc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
