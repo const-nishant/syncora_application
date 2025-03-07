@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
 
+import '../../../common/navbar.dart';
 import '../../auth/auth_exports.dart';
+import '../widgets/helpchatbot.dart';
 import '../widgets/postwidget.dart';
 
 class Homescreen extends StatefulWidget {
@@ -86,8 +88,16 @@ class _HomescreenState extends State<Homescreen> {
           LucideIcons.messageCircle,
           color: Theme.of(context).colorScheme.inversePrimary,
         ),
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const Helpchatbot(),
+            ),
+          );
+        },
       ),
+      // bottomNavigationBar: const NavBar(),
     );
   }
 }
