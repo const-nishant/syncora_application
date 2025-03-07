@@ -118,7 +118,7 @@ class AuthServices extends ChangeNotifier {
     notifyListeners();
   }
 
-// Google Signin
+  // Google Signin
   Future<dynamic> continueWithGoogle(BuildContext context) async {
     _showSignupLoader(context);
     try {

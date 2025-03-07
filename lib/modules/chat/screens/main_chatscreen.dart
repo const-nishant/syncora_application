@@ -25,7 +25,7 @@ class _MainChatscreenState extends State<MainChatscreen> {
         ),
         centerTitle: true,
       ),
-      body: Container(
+      body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: UserList(),
       ),
