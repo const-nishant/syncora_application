@@ -115,7 +115,7 @@ class _ProfilescreenState extends State<Profilescreen> {
 // Get balance safely
                 String balance =
                     Provider.of<WalletProvider>(context, listen: false)
-                            .getBalance(walletAddress, 'sepolia')
+                            .getBalance(walletAddress, 'sepolia',)
                             ?.toString() ??
                         '0';
 

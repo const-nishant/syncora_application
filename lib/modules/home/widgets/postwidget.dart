@@ -3,9 +3,30 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class PostWidget extends StatelessWidget {
+class PostWidget extends StatefulWidget {
+  @override
+  State<PostWidget> createState() => _PostWidgetState();
+}
+
+class _PostWidgetState extends State<PostWidget> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  @override
+  void initState() {
+    temp();
+    super.initState();
+  }
+
+  String profileImage = '';
+
+  void temp() async {
+    DocumentSnapshot userDoc =
+        await _firestore.collection('users').doc(_auth.currentUser!.uid).get();
+    String name = userDoc['profileImage'] ?? '';
+    profileImage = name;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +36,9 @@ class PostWidget extends StatelessWidget {
           .orderBy('timestamp', descending: true)
           .snapshots(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) return CircularProgressIndicator();
+        if (!snapshot.hasData) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
         var posts = snapshot.data!.docs;
 
@@ -25,6 +48,7 @@ class PostWidget extends StatelessWidget {
             var post = posts[index];
             String postId = post.id;
             String userId = post['uid'];
+            String name = post['name'];
             String text = post['text'];
             String imageUrl = post['image'] ?? '';
             Timestamp? timestamp = post['timestamp'] as Timestamp?;
@@ -35,10 +59,10 @@ class PostWidget extends StatelessWidget {
 
             return Card(
               elevation: 3,
-              margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
-                  side: BorderSide(color: Colors.black)),
+                  side: const BorderSide(color: Colors.black)),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -53,37 +77,44 @@ class PostWidget extends StatelessWidget {
                           child: CircleAvatar(
                             radius: 20,
                             backgroundColor: Colors.white,
-                            child: Icon(Icons.person, color: Colors.grey),
+                            backgroundImage: profileImage != null &&
+                                    profileImage.isNotEmpty
+                                ? NetworkImage(profileImage) as ImageProvider
+                                : null, // Show image if available
+                            child: profileImage == null || profileImage.isEmpty
+                                ? Icon(Icons.person,
+                                    color: Colors.grey) // Show icon if no image
+                                : null,
                           ),
                         ),
-                        SizedBox(width: 10),
+                        const SizedBox(width: 10),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              userId,
-                              style: TextStyle(
+                              name,
+                              style: const TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 16),
                             ),
                             Text(
                               timeAgo,
-                              style:
-                                  TextStyle(fontSize: 12, color: Colors.grey),
+                              style: const TextStyle(
+                                  fontSize: 12, color: Colors.grey),
                             ),
                           ],
                         ),
-                        Spacer(),
-                        Icon(Icons.more_horiz, color: Colors.black54),
+                        const Spacer(),
+                        const Icon(Icons.more_horiz, color: Colors.black54),
                       ],
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
 
                     Text(
                       text,
-                      style: TextStyle(fontSize: 14),
+                      style: const TextStyle(fontSize: 14),
                     ),
 
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
 
                     if (imageUrl.isNotEmpty)
                       ClipRRect(
@@ -91,7 +122,7 @@ class PostWidget extends StatelessWidget {
                         child: Image.network(imageUrl, fit: BoxFit.cover),
                       ),
 
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
 
                     // Like & Comment Section
                     Row(
@@ -104,12 +135,12 @@ class PostWidget extends StatelessWidget {
                             color: isLiked ? Colors.red : Colors.black,
                           ),
                         ),
-                        SizedBox(width: 4),
+                        const SizedBox(width: 4),
                         Text(likes.length.toString()),
-                        SizedBox(width: 16),
-                        Icon(LucideIcons.messageCircle, size: 24),
-                        SizedBox(width: 4),
-                        Text("69"),
+                        const SizedBox(width: 16),
+                        const Icon(LucideIcons.messageCircle, size: 24),
+                        const SizedBox(width: 4),
+                        const Text("69"),
                       ],
                     ),
                   ],

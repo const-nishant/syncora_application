@@ -7,11 +7,13 @@ class UserModel {
   final String? walletAddress;
   final String? menoics;
   final String? notificationId;
+  final String? profileImage;
   final bool isSignup;
   final String authProvider;
 
   UserModel({
     required this.username,
+    this.profileImage,
     required this.email,
     required this.uid,
     required this.walletAddress,
@@ -27,6 +29,7 @@ class UserModel {
       'username': username,
       'email': email,
       'uid': uid,
+      'profileImage': profileImage,
       'walletAddress': walletAddress,
       'menoics': menoics,
       'notificationId': notificationId,
@@ -41,6 +44,7 @@ class UserModel {
       username: map['username'] ?? '',
       email: map['email'] ?? '',
       uid: map['uid'] ?? '',
+      profileImage: map['profileImage'] ?? '',
       walletAddress: map['walletAddress'] ?? '',
       menoics: map['menoics'] ?? '',
       notificationId: map['notificationId'] ?? '',
