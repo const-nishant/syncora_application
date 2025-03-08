@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
-
-import '../../../common/navbar.dart';
 import '../../auth/auth_exports.dart';
 import '../widgets/helpchatbot.dart';
 import '../widgets/postwidget.dart';
@@ -75,9 +73,13 @@ class _HomescreenState extends State<Homescreen> {
               SizedBox(height: 20),
               Text(
                 "Feed",
-                style: TextStyle(fontSize: 24),
+                style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'FontMain',
+                    color: Theme.of(context).colorScheme.primary),
               ),
-              // PostWidget(),
+              Expanded(child: PostWidget()),
             ],
           ),
         ),
@@ -97,7 +99,6 @@ class _HomescreenState extends State<Homescreen> {
           );
         },
       ),
-      // bottomNavigationBar: const NavBar(),
     );
   }
 }

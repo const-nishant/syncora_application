@@ -1,137 +1,147 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:carousel_slider/carousel_slider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class PostWidget extends StatefulWidget {
-  @override
-  _PostWidgetState createState() => _PostWidgetState();
-}
-
-class _PostWidgetState extends State<PostWidget> {
-  int _currentIndex = 0;
-  final List<String> _imageUrls = [
-    "https://via.placeholder.com/150", // Replace with actual images
-    "https://via.placeholder.com/150",
-    "https://via.placeholder.com/150",
-  ];
+class PostWidget extends StatelessWidget {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 3,
-      margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: Colors.black)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Profile Section
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 22,
-                  backgroundColor: Colors.orange,
-                  child: CircleAvatar(
-                    radius: 20,
-                    backgroundColor: Colors.white,
-                    child: Icon(Icons.person, color: Colors.grey),
-                  ),
-                ),
-                SizedBox(width: 10),
-                Column(
+    return StreamBuilder<QuerySnapshot>(
+      stream: _firestore
+          .collection('posts')
+          .orderBy('timestamp', descending: true)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) return CircularProgressIndicator();
+
+        var posts = snapshot.data!.docs;
+
+        return ListView.builder(
+          itemCount: posts.length,
+          itemBuilder: (context, index) {
+            var post = posts[index];
+            String postId = post.id;
+            String userId = post['uid'];
+            String text = post['text'];
+            String imageUrl = post['image'] ?? '';
+            Timestamp? timestamp = post['timestamp'] as Timestamp?;
+            List<dynamic> likes = post['likes'] ?? []; // Store liked users
+            String timeAgo =
+                timestamp != null ? _timeAgo(timestamp.toDate()) : 'Just now';
+            bool isLiked = likes.contains(_auth.currentUser!.uid);
+
+            return Card(
+              elevation: 3,
+              margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  side: BorderSide(color: Colors.black)),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "Const_Ansh",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    // Profile Section
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 22,
+                          backgroundColor: Colors.orange,
+                          child: CircleAvatar(
+                            radius: 20,
+                            backgroundColor: Colors.white,
+                            child: Icon(Icons.person, color: Colors.grey),
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              userId,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                            Text(
+                              timeAgo,
+                              style:
+                                  TextStyle(fontSize: 12, color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                        Spacer(),
+                        Icon(Icons.more_horiz, color: Colors.black54),
+                      ],
                     ),
+                    SizedBox(height: 8),
+
                     Text(
-                      "22m ago",
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                      text,
+                      style: TextStyle(fontSize: 14),
+                    ),
+
+                    SizedBox(height: 8),
+
+                    if (imageUrl.isNotEmpty)
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.network(imageUrl, fit: BoxFit.cover),
+                      ),
+
+                    SizedBox(height: 8),
+
+                    // Like & Comment Section
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () => _toggleLike(postId, likes),
+                          child: Icon(
+                            isLiked ? LucideIcons.heart : LucideIcons.heart,
+                            size: 24,
+                            color: isLiked ? Colors.red : Colors.black,
+                          ),
+                        ),
+                        SizedBox(width: 4),
+                        Text(likes.length.toString()),
+                        SizedBox(width: 16),
+                        Icon(LucideIcons.messageCircle, size: 24),
+                        SizedBox(width: 4),
+                        Text("69"),
+                      ],
                     ),
                   ],
                 ),
-                Spacer(),
-                Icon(Icons.more_horiz, color: Colors.black54),
-              ],
-            ),
-            SizedBox(height: 8),
-
-            // Post Content
-            Text(
-              "🚀 The Future of Finance: Bitcoin & Digital Assets\n"
-              "Revolutionizing the Game! 🔥💰 #Crypto #Bitcoin #Web3",
-              style: TextStyle(fontSize: 14),
-            ),
-
-            SizedBox(height: 8),
-
-            // Image Carousel
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: CarouselSlider(
-                options: CarouselOptions(
-                  height: 200,
-                  autoPlay: true,
-                  enlargeCenterPage: true,
-                  viewportFraction: 1.0,
-                  onPageChanged: (index, reason) {
-                    setState(() {
-                      _currentIndex = index;
-                    });
-                  },
-                ),
-                items: _imageUrls.map((url) {
-                  return Container(
-                    width: double.infinity,
-                    color: Colors.grey.shade300, // Placeholder background
-                    child: Image.network(url, fit: BoxFit.cover),
-                  );
-                }).toList(),
               ),
-            ),
-
-            SizedBox(height: 8),
-
-            // Dot Indicator
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: _imageUrls.asMap().entries.map((entry) {
-                return Container(
-                  width: 8,
-                  height: 8,
-                  margin: EdgeInsets.symmetric(horizontal: 3),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: _currentIndex == entry.key
-                        ? Colors.black
-                        : Colors.grey.shade400,
-                  ),
-                );
-              }).toList(),
-            ),
-
-            SizedBox(height: 8),
-
-            // Like & Comment Section
-            Row(
-              children: [
-                Icon(LucideIcons.heart, size: 24),
-                SizedBox(width: 4),
-                Text("69"),
-                SizedBox(width: 16),
-                Icon(LucideIcons.messageCircle, size: 24),
-                SizedBox(width: 4),
-                Text("69"),
-              ],
-            ),
-          ],
-        ),
-      ),
+            );
+          },
+        );
+      },
     );
+  }
+
+  // Like/Unlike function
+  void _toggleLike(String postId, List<dynamic> likes) {
+    String userId = _auth.currentUser!.uid;
+    if (likes.contains(userId)) {
+      _firestore.collection('posts').doc(postId).update({
+        'likes': FieldValue.arrayRemove([userId])
+      });
+    } else {
+      _firestore.collection('posts').doc(postId).update({
+        'likes': FieldValue.arrayUnion([userId])
+      });
+    }
+  }
+
+  // Time Formatting
+  String _timeAgo(DateTime dateTime) {
+    Duration difference = DateTime.now().difference(dateTime);
+    if (difference.inMinutes < 1) return "Just now";
+    if (difference.inMinutes < 60) return "${difference.inMinutes}m ago";
+    if (difference.inHours < 24) return "${difference.inHours}h ago";
+    return "${difference.inDays}d ago";
   }
 }
