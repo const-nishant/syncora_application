@@ -9,8 +9,8 @@
 
     <application
         android:label="syncora_application"
-        android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:name="Syncora"
+        android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
             android:exported="true"
