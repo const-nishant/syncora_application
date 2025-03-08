@@ -13,7 +13,7 @@ class AuthServices extends ChangeNotifier {
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Future login(String email, String password, BuildContext context) async {
-    _showLoader(context);
+    _showSignupLoader(context);
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
 
@@ -24,12 +24,15 @@ class AuthServices extends ChangeNotifier {
 
       String? mnemonic = await getmenoics();
       await walletProvider.getExistingPrivateKey(mnemonic!);
-    } on FirebaseAuthException catch (e) {
+    } catch (e) {
       if (context.mounted) {
-        _showError(context, e.message ?? 'An error occurred');
+        _showError(context, e.toString());
       }
     } finally {
-      if (context.mounted) Navigator.pop(context); // Close the loader
+      if (_dialogContext != null && _dialogContext!.mounted) {
+        Navigator.pop(_dialogContext!); // Close the loader
+        _dialogContext = null; // Reset after closing
+      }
     }
     notifyListeners();
   }
@@ -272,7 +275,7 @@ class AuthServices extends ChangeNotifier {
   }
 
   void logout(BuildContext context) async {
-    await Provider.of<WalletProvider>(context, listen: false).clearPrivateKey();
+    // await Provider.of<WalletProvider>(context, listen: false).clearPrivateKey();
     await _auth.signOut();
     notifyListeners();
   }

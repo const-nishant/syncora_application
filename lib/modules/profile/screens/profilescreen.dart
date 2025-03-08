@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncora_application/common/large_button.dart';
+import 'package:syncora_application/modules/profile/widgets/transfertoken.dart';
 import 'package:web3dart/web3dart.dart';
 import '../../auth/auth_exports.dart';
 import '../../themes/theme_provider.dart';
@@ -161,6 +162,34 @@ class _ProfilescreenState extends State<Profilescreen> {
                               },
                             ),
                           ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Transfer Tokens ",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                            color: Theme.of(context).colorScheme.inversePrimary,
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(
+                            Icons.arrow_forward_ios,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => const Transfertoken(),
+                              ),
+                            );
+                          },
                         ),
                       ],
                     ),
