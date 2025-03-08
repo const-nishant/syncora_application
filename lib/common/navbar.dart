@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:syncora_application/modules/NFT/nftscreen.dart';
 import 'package:syncora_application/modules/chat/screens/main_chatscreen.dart';
 import 'package:syncora_application/modules/home/screen/homescreen.dart';
 import 'package:syncora_application/modules/posts/post_screen.dart';
@@ -25,7 +26,7 @@ class _NavBarState extends State<NavBar> {
     const Homescreen(), //0th index
     const MainChatscreen(), //1th index
     const PostScreen(), //2th index
-    const Placeholder(), //3th index
+    NFTScreen(), //3th index
     const Profilescreen(), //4th index
   ];
 
