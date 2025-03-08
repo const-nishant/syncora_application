@@ -1,10 +1,18 @@
+import 'dart:io';
+
+import 'package:appwrite/appwrite.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncora_application/common/large_button.dart';
+import 'package:syncora_application/config/configs.dart';
 import 'package:syncora_application/modules/profile/widgets/transfertoken.dart';
 import 'package:web3dart/web3dart.dart';
+import '../../../main.dart';
 import '../../auth/auth_exports.dart';
 import '../../themes/theme_provider.dart';
 import 'blocked_users.dart';
@@ -17,11 +25,58 @@ class Profilescreen extends StatefulWidget {
 }
 
 class _ProfilescreenState extends State<Profilescreen> {
+  final _auth = FirebaseAuth.instance;
+  Storage _storage = Storage(client);
+  final _firestore = FirebaseFirestore.instance;
   void copytoClipboard(String text) {
     Clipboard.setData(ClipboardData(text: text));
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Copied to clipboard')),
     );
+  }
+
+  File? _imageFile;
+
+  Future<void> _pickImage() async {
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() => _imageFile = File(pickedFile.path));
+      await _uploadImage(File(pickedFile.path));
+    }
+  }
+
+  Future<void> _uploadImage(File imageFile) async {
+    try {
+      String uid = _auth.currentUser?.uid ?? "";
+      if (uid.isEmpty) return;
+
+      final response = await _storage.createFile(
+        bucketId: Configs.appWriteUserProfileStorageBucketId,
+        fileId: "unique()",
+        file: InputFile.fromPath(path: imageFile.path),
+      );
+
+      String imageUrl =
+          "https://cloud.appwrite.io/v1/storage/buckets/your_bucket_id/files/${response.$id}/view?project=your_project_id";
+
+      await _firestore.collection('users').doc(uid).update({
+        'profileImage': imageUrl,
+      });
+
+      setState(() {});
+    } catch (e) {
+      print("Image upload error: $e");
+    }
+  }
+
+  Future<Map<String, dynamic>?> _fetchUserData() async {
+    String uid = _auth.currentUser?.uid ?? "";
+    if (uid.isEmpty) return null;
+
+    DocumentSnapshot userDoc =
+        await _firestore.collection('users').doc(uid).get();
+    return userDoc.exists ? userDoc.data() as Map<String, dynamic> : null;
   }
 
   @override
@@ -77,30 +132,62 @@ class _ProfilescreenState extends State<Profilescreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Center(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CircleAvatar(
-                            radius: 60,
-                            child: Icon(Icons.account_circle_outlined,
-                                size: 100,
-                                color: Theme.of(context).colorScheme.secondary),
-                          ),
-                          const SizedBox(height: 20),
-                          Text(
-                            userName,
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
+                      child: FutureBuilder<Map<String, dynamic>?>(
+                        future: _fetchUserData(),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData || snapshot.data == null) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          }
+
+                          var userData = snapshot.data!;
+                          String name = userData['username'] ?? 'User';
+                          String? profileImage = userData['profileImage'];
+
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Center(
+                                child: Column(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: _pickImage,
+                                      child: CircleAvatar(
+                                        radius: 60,
+                                        backgroundColor: Colors.grey.shade300,
+                                        backgroundImage: _imageFile != null
+                                            ? FileImage(_imageFile!)
+                                            : profileImage != null
+                                                ? NetworkImage(profileImage)
+                                                : null,
+                                        child: (_imageFile == null &&
+                                                profileImage == null)
+                                            ? Icon(
+                                                Icons.account_circle_outlined,
+                                                size: 100,
+                                                color: Colors.white)
+                                            : null,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 20),
+                                    Text(
+                                      name,
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              const Divider(),
+                            ],
+                          );
+                        },
                       ),
                     ),
-                    const SizedBox(height: 20),
-                    const Divider(),
                     const SizedBox(height: 20),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
