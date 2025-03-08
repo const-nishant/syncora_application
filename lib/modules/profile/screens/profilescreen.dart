@@ -162,7 +162,7 @@ class _ProfilescreenState extends State<Profilescreen> {
                                                 : null,
                                         child: (_imageFile == null &&
                                                 profileImage == null)
-                                            ? Icon(
+                                            ? const Icon(
                                                 Icons.account_circle_outlined,
                                                 size: 100,
                                                 color: Colors.white)
@@ -172,7 +172,7 @@ class _ProfilescreenState extends State<Profilescreen> {
                                     const SizedBox(height: 20),
                                     Text(
                                       name,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.white,

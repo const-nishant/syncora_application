@@ -47,70 +47,72 @@ class _HomescreenState extends State<Homescreen> {
               FutureBuilder<Map<String, dynamic>?>(
                 future: fetchUserData(),
                 builder: (context, snapshot) {
-                  if (!snapshot.hasData || snapshot.data == null) {
-                    return CircularProgressIndicator(); // Show loading state
+                  if (snapshot.hasData || snapshot.data != null) {
+                    var userData = snapshot.data!;
+                    String name = userData['username'] ?? 'User';
+                    String? profileImage = userData['profileImage'];
+
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        CircleAvatar(
+                          radius: 30, // Half of width/height (60/2)
+                          backgroundImage: profileImage != null
+                              ? NetworkImage(profileImage)
+                              : null,
+                          backgroundColor:
+                              Colors.grey[300], // Fallback background color
+                          child: profileImage == null
+                              ? const Icon(Icons.person,
+                                  size: 40, color: Colors.grey)
+                              : null,
+                        ),
+                        const SizedBox(width: 16),
+                        Text(
+                          "Hello!!, $name",
+                          style: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        // Container(
+                        //   width: 50, // Set width
+                        //   height: 50, // Set height
+                        //   decoration: BoxDecoration(
+                        //     shape: BoxShape.circle,
+                        //     border: Border.all(
+                        //       color: Theme.of(context).colorScheme.primary,
+                        //       width: 2.0,
+                        //     ),
+                        //   ),
+                        //   child: IconButton(
+                        //     iconSize: 24,
+                        //     icon: Icon(
+                        //       Icons.notifications,
+                        //       color: Theme.of(context).colorScheme.primary,
+                        //     ),
+                        //     onPressed: () {},
+                        //   ),
+                        // ),
+                      ],
+                    );
                   }
-
-                  var userData = snapshot.data!;
-                  String name = userData['username'] ?? 'User';
-                  String? profileImage = userData['profileImage'];
-
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CircleAvatar(
-                        radius: 30,
-                        backgroundColor: Colors.grey.shade300,
-                        backgroundImage: profileImage != null
-                            ? NetworkImage(profileImage)
-                            : null, // Show image if available
-                        child: profileImage == null
-                            ? Icon(Icons.person, size: 30, color: Colors.white)
-                            : null, // Show default icon if no image
-                      ),
-                      Text(
-                        "Hello!!, $name",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      Container(
-                        width: 50, // Set width
-                        height: 50, // Set height
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Theme.of(context).colorScheme.primary,
-                            width: 2.0,
-                          ),
-                        ),
-                        child: IconButton(
-                          iconSize: 24,
-                          icon: Icon(
-                            Icons.notifications,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                          onPressed: () {},
-                        ),
-                      ),
-                    ],
-                  );
+                  return const SizedBox.shrink();
                 },
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Divider(
                 color: Theme.of(context).colorScheme.primary,
                 thickness: 2,
                 indent: 10,
                 endIndent: 10,
               ),
-              SizedBox(height: 20),
-              Text(
+              const SizedBox(height: 20),
+              const Text(
                 "Feed",
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   fontFamily: 'FontMain',
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Color(0xFF6A3200),
                 ),
               ),
               Expanded(child: PostWidget()),

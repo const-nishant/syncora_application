@@ -39,14 +39,14 @@ class _MemonicsScreenState extends State<MemonicsScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // Title
-            Padding(
-              padding: const EdgeInsets.only(top: 80),
+            const Padding(
+              padding: EdgeInsets.only(top: 80),
               child: Text(
                 "Save your recovery Phrase",
                 style: TextStyle(
                   fontFamily: 'fontMain',
                   fontSize: 24,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Color(0xFF6A3200),
                   fontWeight: FontWeight.bold,
                 ),
                 textAlign: TextAlign.center,

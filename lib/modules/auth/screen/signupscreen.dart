@@ -68,16 +68,16 @@ class _SignupScreenState extends State<Signupscreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 spacing: 10,
                 children: [
-                  Text(
+                  const Text(
                     "Create a new Account",
                     style: TextStyle(
                       fontSize: 32,
                       fontFamily: 'FontMain',
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.primary,
+                      color: Color(0xFF6A3200),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 6.0,
                   ),
                   Commontextfield(

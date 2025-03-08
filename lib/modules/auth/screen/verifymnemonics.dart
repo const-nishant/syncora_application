@@ -21,11 +21,12 @@ class _VerifymnemonicsState extends State<Verifymnemonics> {
       // Navigate to the next screen
       await Provider.of<AuthServices>(context, listen: false)
           .changeSignupStatus(true);
+      // ignore: use_build_context_synchronously
       Phoenix.rebirth(context);
     } else {
       // Show error message
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Mnemonics does not match'),
           backgroundColor: Colors.red,
         ),
@@ -42,20 +43,24 @@ class _VerifymnemonicsState extends State<Verifymnemonics> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Verify Mnemonics")),
+      appBar: AppBar(
+          title: Text(
+        "Verify Mnemonics",
+        style: TextStyle(color: Theme.of(context).colorScheme.primary),
+      )),
       body: Padding(
         padding: const EdgeInsets.all(14.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
+            const Text(
               'Please verify your Mnemonics',
               style: TextStyle(
                 fontSize: 22,
                 fontFamily: 'FontMain',
                 fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary,
+                color: Color(0xFF6A3200),
               ),
             ),
             const SizedBox(height: 24),
