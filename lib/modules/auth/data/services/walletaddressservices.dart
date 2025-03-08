@@ -1,10 +1,10 @@
+import 'package:bip39/bip39.dart' as bip39;
 import 'package:ed25519_hd_key/ed25519_hd_key.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:hex/hex.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web3dart/web3dart.dart';
-import 'package:bip39/bip39.dart' as bip39;
 
 abstract class WalletAddressService {
   String generateMnemonic();
@@ -110,6 +110,18 @@ class WalletProvider extends ChangeNotifier implements WalletAddressService {
 
       if (pvKey.isEmpty) throw Exception("Private key not found.");
 
+      // Ensure receiver address is in proper hex format
+      receiverAddress = receiverAddress.trim();
+      if (!receiverAddress.startsWith("0x")) {
+        receiverAddress = "0x$receiverAddress";
+      }
+
+      try {
+        EthereumAddress.fromHex(receiverAddress);
+      } catch (e) {
+        throw Exception("Invalid Ethereum address.");
+      }
+
       var apiURL =
           'https://sepolia.infura.io/v3/e6f87a7eca7a43cd89085c05e158a04c';
       var ethClient = Web3Client(apiURL, http.Client());
@@ -132,19 +144,23 @@ class WalletProvider extends ChangeNotifier implements WalletAddressService {
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(
-          "Transaction successful!",
-          style: TextStyle(color: Colors.green),
-        )),
+          content: Text(
+            "Transaction successful!",
+            style: TextStyle(color: Colors.green),
+          ),
+        ),
       );
     } catch (e) {
+      print("Transaction Error: $e"); // Debugging log
+
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(
-          "Transaction failed: $e",
-          style: TextStyle(color: Colors.red),
-        )),
+          content: Text(
+            "Transaction failed: $e",
+            style: TextStyle(color: Colors.red),
+          ),
+        ),
       );
     }
   }
