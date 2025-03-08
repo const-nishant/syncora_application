@@ -1,6 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:syncora_application/modules/profile/screens/profilescreen.dart';
 
 class PostScreen extends StatefulWidget {
   const PostScreen({super.key});
@@ -11,6 +13,31 @@ class PostScreen extends StatefulWidget {
 
 class _PostScreenState extends State<PostScreen> {
   final TextEditingController _controller = TextEditingController();
+  final ImagePicker _picker = ImagePicker();
+  XFile? _selectedImage;
+  XFile? _selectedVideo;
+
+  Future<void> _pickImage() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        _selectedImage = image;
+      });
+      // Handle the selected image
+      log('Selected image path: ${image.path}');
+    }
+  }
+
+  Future<void> _pickVideo() async {
+    final XFile? video = await _picker.pickVideo(source: ImageSource.gallery);
+    if (video != null) {
+      setState(() {
+        _selectedVideo = video;
+      });
+      // Handle the selected video
+      log('Selected video path: ${video.path}');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +47,7 @@ class _PostScreenState extends State<PostScreen> {
           GestureDetector(
             onTap: () {
               // Add your onPressed code here!
+              // You can use _selectedImage and _selectedVideo to send to Appwrite
             },
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20.0),
@@ -54,13 +82,7 @@ class _PostScreenState extends State<PostScreen> {
                     size: 40.0,
                     color: Theme.of(context).colorScheme.primary,
                   ),
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const Profilescreen(),
-                      ),
-                    );
-                  },
+                  onPressed: () {},
                 ),
                 const SizedBox(width: 10),
                 Expanded(
@@ -92,18 +114,18 @@ class _PostScreenState extends State<PostScreen> {
                     icon: Icon(
                       LucideIcons.image,
                       size: 28.0,
-                      color: Theme.of(context).colorScheme.primary,
+                      color: Theme.of(context).colorScheme.inversePrimary,
                     ),
-                    onPressed: () {},
+                    onPressed: _pickImage,
                   ),
                 ),
                 IconButton(
                   icon: Icon(
                     LucideIcons.video,
                     size: 28.0,
-                    color: Theme.of(context).colorScheme.primary,
+                    color: Theme.of(context).colorScheme.inversePrimary,
                   ),
-                  onPressed: () {},
+                  onPressed: _pickVideo,
                 ),
               ],
             ),
