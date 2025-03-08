@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
+import 'package:provider/provider.dart';
+import 'package:syncora_application/modules/auth/data/services/walletaddressservices.dart';
 import '../../../common/commontextfield.dart';
+import '../../auth/auth_exports.dart';
 import '../data/data_exports.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -57,13 +60,79 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  void sendmessage() async {
+  void sendMessage() async {
     if (messagecontroller.text.isNotEmpty) {
-      await _chatservices.sendmessage(
-          widget.receiverID, messagecontroller.text);
+      String messageText = messagecontroller.text;
+
+      // Regex to check for token transfer command
+      RegExp regex = RegExp(r'request\s+@(\w+)\s+(\d+)\s+token');
+      Match? match = regex.firstMatch(messageText);
+
+      if (match != null) {
+        String username = match.group(1)!; // Extracted username
+        int amount = int.parse(match.group(2)!); // Extracted amount
+
+        Provider.of<AuthServices>(context, listen: false)
+            .requestTokens(username, amount, context);
+      }
+
+      RegExp sendregex = RegExp(r'send\s+@(\w+)\s+(\d+)\s+token');
+      Match? sendmatch = sendregex.firstMatch(messageText);
+
+      if (sendmatch != null) {
+        String username = sendmatch.group(1)!; // Extracted username
+        int amount = int.parse(sendmatch.group(2)!); // Extracted amount
+
+        // Show confirmation dialog
+        showConfirmationDialog(context, username, amount);
+      }
+      await _chatservices.sendmessage(widget.receiverID, messageText);
       messagecontroller.clear();
       scrolldown();
     }
+  }
+
+  void checkusernameWalletAddress(String username, String txnValue) async {
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+    DocumentSnapshot userSnapshot = await firestore
+        .collection('users')
+        .where('username', isEqualTo: username)
+        .limit(1)
+        .get()
+        .then((QuerySnapshot snapshot) => snapshot.docs.first);
+
+    if (userSnapshot.exists) {
+      String walletAddress = userSnapshot['walletAddress'];
+      Provider.of<WalletProvider>(context, listen: false)
+          .sendTokens(walletAddress, txnValue, context);
+    }
+  }
+
+  void showConfirmationDialog(
+      BuildContext context, String username, int amount) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirm Transaction'),
+          content: Text('Do you want to send $amount tokens to $username?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context), // Cancel
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                // Perform the transaction logic here
+                checkusernameWalletAddress(username, amount.toString());
+              },
+              child: Text('Confirm'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -118,7 +187,7 @@ class _ChatScreenState extends State<ChatScreen> {
               shape: BoxShape.circle,
             ),
             child: IconButton(
-              onPressed: sendmessage,
+              onPressed: () => sendMessage(),
               icon: const Icon(
                 Icons.send,
                 color: Colors.white,
