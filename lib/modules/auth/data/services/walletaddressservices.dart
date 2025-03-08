@@ -53,7 +53,9 @@ class WalletProvider extends ChangeNotifier implements WalletAddressService {
 
 //get balance
   Future<String> getBalance(String address, String chain) async {
-    final url = Uri.http('192.168.137.103:8080', '/get-token-balance', {
+    final url = Uri.http(
+        '81255eae-6d52-4622-a7cb-2dea4bdf798c-00-34u4anflkzbsi.riker.replit.dev',
+        '/get-token-balance', {
       'address': address,
       'chain': chain,
     });

@@ -57,17 +57,22 @@ class _HomescreenState extends State<Homescreen> {
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        CircleAvatar(
-                          radius: 30,
-                          backgroundColor: Colors.grey.shade300,
-                          backgroundImage: profileImage != null
-                              ? NetworkImage(profileImage)
-                              : null,
-                          child: (profileImage == null && profileImage == null)
-                              ? const Icon(Icons.account_circle_outlined,
-                                  size: 100, color: Colors.white)
-                              : null,
-                        ),
+                        if (profileImage != null)
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8.0),
+                            child: Image.network(
+                              profileImage,
+                              width: 30,
+                              height: 30,
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                        else
+                          const Icon(
+                            Icons.account_circle_outlined,
+                            size: 60,
+                            color: Colors.grey,
+                          ),
                         const SizedBox(width: 16),
                         Text(
                           "Hello!!, $name",
@@ -76,25 +81,6 @@ class _HomescreenState extends State<Homescreen> {
                               fontWeight: FontWeight.bold,
                               color: Theme.of(context).colorScheme.primary),
                         ),
-                        // Container(
-                        //   width: 50, // Set width
-                        //   height: 50, // Set height
-                        //   decoration: BoxDecoration(
-                        //     shape: BoxShape.circle,
-                        //     border: Border.all(
-                        //       color: Theme.of(context).colorScheme.primary,
-                        //       width: 2.0,
-                        //     ),
-                        //   ),
-                        //   child: IconButton(
-                        //     iconSize: 24,
-                        //     icon: Icon(
-                        //       Icons.notifications,
-                        //       color: Theme.of(context).colorScheme.primary,
-                        //     ),
-                        //     onPressed: () {},
-                        //   ),
-                        // ),
                       ],
                     );
                   }
