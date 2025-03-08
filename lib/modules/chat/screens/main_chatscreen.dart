@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:syncora_application/modules/chat/data/models/userlist.dart';
+import 'package:syncora_application/modules/chat/screens/requestscreen.dart';
 
 class MainChatscreen extends StatefulWidget {
   const MainChatscreen({super.key});
@@ -23,6 +25,24 @@ class _MainChatscreenState extends State<MainChatscreen> {
               // color: Colors.white,
               ),
         ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: IconButton(
+              icon: Icon(
+                LucideIcons.walletCards,
+                size: 24,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const Requestscreen()));
+              },
+            ),
+          ),
+        ],
         centerTitle: true,
       ),
       body: Padding(

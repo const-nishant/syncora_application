@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncora_application/common/large_button.dart';
-
+import 'package:web3dart/web3dart.dart';
 import '../../auth/auth_exports.dart';
 import '../../themes/theme_provider.dart';
 import 'blocked_users.dart';
@@ -21,6 +21,11 @@ class _ProfilescreenState extends State<Profilescreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Copied to clipboard')),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
@@ -50,6 +55,23 @@ class _ProfilescreenState extends State<Profilescreen> {
                 String userName = userData['username'] ?? 'User Name';
                 String walletAddress = userData['walletAddress'] ?? '0';
                 String email = userData['email'] ?? 'No email';
+
+// Get balance safely
+                String balance =
+                    Provider.of<WalletProvider>(context, listen: false)
+                            .getBalance(walletAddress, 'sepolia')
+                            ?.toString() ??
+                        '0';
+
+// Ensure balance is a valid number
+                BigInt parsedBalance = BigInt.tryParse(balance) ?? BigInt.zero;
+
+// Convert to EtherAmount
+                EtherAmount latestBalance =
+                    EtherAmount.fromBigInt(EtherUnit.wei, parsedBalance);
+                String formattedBalance =
+                    latestBalance.getValueInUnit(EtherUnit.ether).toString();
+
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -91,7 +113,7 @@ class _ProfilescreenState extends State<Profilescreen> {
                           ),
                         ),
                         Text(
-                          '0',
+                          formattedBalance,
                           style: TextStyle(
                             fontSize: 20,
                             color: Theme.of(context).colorScheme.primary,
@@ -224,7 +246,7 @@ class _ProfilescreenState extends State<Profilescreen> {
                     LargeButton(
                         onPressed: () {
                           Provider.of<AuthServices>(context, listen: false)
-                              .logout();
+                              .logout(context);
                         },
                         text: "Logout"),
                   ],

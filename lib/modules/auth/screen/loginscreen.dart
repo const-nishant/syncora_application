@@ -82,7 +82,7 @@ class _LoginscreenState extends State<Loginscreen> {
                     keyboardType: TextInputType.emailAddress,
                     hintText: "Enter Your Email",
                     prefixIcon: Icon(LucideIcons.mail),
-                    obscureText: obscureText,
+                    obscureText: false,
                     readOnly: false,
                     focusNode: FocusNode(),
                   ),

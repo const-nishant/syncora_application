@@ -16,8 +16,14 @@ class AuthServices extends ChangeNotifier {
     _showLoader(context);
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
-      await Provider.of<WalletProvider>(context, listen: false)
-          .loadWalletData();
+
+      // Access WalletProvider before the widget is disposed
+      final walletProvider =
+          Provider.of<WalletProvider>(context, listen: false);
+      await walletProvider.loadWalletData();
+
+      String? mnemonic = await getmenoics();
+      await walletProvider.getExistingPrivateKey(mnemonic!);
     } on FirebaseAuthException catch (e) {
       if (context.mounted) {
         _showError(context, e.message ?? 'An error occurred');
@@ -30,6 +36,53 @@ class AuthServices extends ChangeNotifier {
 
   //get current user
   User? getCurrentUser() => _auth.currentUser;
+
+//request token
+  Future<String> getCurrentUsername() async {
+    String? uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return "UnknownUser";
+
+    DocumentSnapshot userDoc =
+        await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    return userDoc.exists
+        ? userDoc['username'] ?? "UnknownUser"
+        : "UnknownUser";
+  }
+
+  Future<void> requestTokens(
+      String receiverUsername, int amount, BuildContext context) async {
+    try {
+      String senderUsername = await getCurrentUsername();
+
+      await FirebaseFirestore.instance.collection('requests').add({
+        'sender': senderUsername,
+        'receiver': receiverUsername,
+        'amount': amount,
+        'status': 'pending',
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content:
+              Text("Request sent to @$receiverUsername for $amount tokens."),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Failed to request tokens: $e")),
+      );
+    }
+    notifyListeners();
+  }
+
+  //get wallet address
+  Future<String> getWalletAddress() async {
+    DocumentSnapshot userSnapshot =
+        await _firestore.collection('users').doc(_auth.currentUser?.uid).get();
+    String walletAddress = userSnapshot['walletAddress'];
+    return walletAddress;
+  }
 
   //get wallet address
   Stream<DocumentSnapshot> getUserDataStream() {
@@ -218,7 +271,8 @@ class AuthServices extends ChangeNotifier {
     );
   }
 
-  void logout() async {
+  void logout(BuildContext context) async {
+    await Provider.of<WalletProvider>(context, listen: false).clearPrivateKey();
     await _auth.signOut();
     notifyListeners();
   }
