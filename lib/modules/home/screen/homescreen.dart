@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 import '../../auth/auth_exports.dart';
 import '../widgets/helpchatbot.dart';
 import '../widgets/postwidget.dart';
@@ -13,10 +16,22 @@ class Homescreen extends StatefulWidget {
 }
 
 class _HomescreenState extends State<Homescreen> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   @override
   void initState() {
     Provider.of<WalletProvider>(context, listen: false).loadWalletData();
     super.initState();
+  }
+
+  Future<Map<String, dynamic>?> fetchUserData() async {
+    String uid = _auth.currentUser?.uid ?? "";
+    if (uid.isEmpty) return null;
+
+    DocumentSnapshot userDoc =
+        await _firestore.collection('users').doc(uid).get();
+    return userDoc.exists ? userDoc.data() as Map<String, dynamic> : null;
   }
 
   @override
@@ -29,39 +44,57 @@ class _HomescreenState extends State<Homescreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  CircleAvatar(
-                    radius: 30,
-                    backgroundImage: NetworkImage(
-                      'https://via.placeholder.com/150',
-                    ),
-                  ),
-                  Text("Hello!!, [name]"),
-                  Container(
-                    width: 50, // Set width
-                    height:
-                        50, // Set height (same as width for a perfect circle)
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .primary, // Border color
-                        width: 2.0, // Border thickness
+              FutureBuilder<Map<String, dynamic>?>(
+                future: fetchUserData(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData || snapshot.data == null) {
+                    return CircularProgressIndicator(); // Show loading state
+                  }
+
+                  var userData = snapshot.data!;
+                  String name = userData['username'] ?? 'User';
+                  String? profileImage = userData['profileImage'];
+
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      CircleAvatar(
+                        radius: 30,
+                        backgroundColor: Colors.grey.shade300,
+                        backgroundImage: profileImage != null
+                            ? NetworkImage(profileImage)
+                            : null, // Show image if available
+                        child: profileImage == null
+                            ? Icon(Icons.person, size: 30, color: Colors.white)
+                            : null, // Show default icon if no image
                       ),
-                    ),
-                    child: IconButton(
-                      iconSize: 24, // Adjust icon size inside the button
-                      icon: Icon(
-                        Icons.notifications,
-                        color: Theme.of(context).colorScheme.primary,
+                      Text(
+                        "Hello!!, $name",
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
                       ),
-                      onPressed: () {},
-                    ),
-                  ),
-                ],
+                      Container(
+                        width: 50, // Set width
+                        height: 50, // Set height
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.primary,
+                            width: 2.0,
+                          ),
+                        ),
+                        child: IconButton(
+                          iconSize: 24,
+                          icon: Icon(
+                            Icons.notifications,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          onPressed: () {},
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
               SizedBox(height: 8),
               Divider(
@@ -74,10 +107,11 @@ class _HomescreenState extends State<Homescreen> {
               Text(
                 "Feed",
                 style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'FontMain',
-                    color: Theme.of(context).colorScheme.primary),
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'FontMain',
+                  color: Theme.of(context).colorScheme.primary,
+                ),
               ),
               Expanded(child: PostWidget()),
             ],
