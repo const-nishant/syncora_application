@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class NFTService {
-  final String baseUrl = "http://127.0.0.1:5000"; // Flask API URL
+  final String baseUrl = "http://192.168.137.103:8080"; // Flask API URL
 
   Future<List<NFT>> fetchNFTs() async {
     final response = await http.get(Uri.parse('$baseUrl/nfts'));

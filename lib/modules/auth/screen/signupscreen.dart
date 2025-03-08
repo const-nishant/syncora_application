@@ -83,7 +83,7 @@ class _SignupScreenState extends State<Signupscreen> {
                   Commontextfield(
                     controller: usernameTextEditingController,
                     keyboardType: TextInputType.name,
-                    prefixIcon: Icon(LucideIcons.user),
+                    prefixIcon: const Icon(LucideIcons.user),
                     hintText: "Create your username ",
                     obscureText: false,
                     readOnly: false,
@@ -98,7 +98,7 @@ class _SignupScreenState extends State<Signupscreen> {
                   Commontextfield(
                     controller: emailTextEditingController,
                     keyboardType: TextInputType.emailAddress,
-                    prefixIcon: Icon(LucideIcons.mail),
+                    prefixIcon: const Icon(LucideIcons.mail),
                     hintText: "Enter your email",
                     obscureText: false,
                     readOnly: false,
@@ -123,7 +123,7 @@ class _SignupScreenState extends State<Signupscreen> {
                       }
                       return null;
                     },
-                    prefixIcon: Icon(Icons.lock),
+                    prefixIcon: const Icon(Icons.lock),
                     suffixIcon: IconButton(
                       icon: Icon(
                         obscureText ? Icons.visibility_off : Icons.visibility,
@@ -152,7 +152,7 @@ class _SignupScreenState extends State<Signupscreen> {
                       }
                       return null;
                     },
-                    prefixIcon: Icon(Icons.lock),
+                    prefixIcon: const Icon(Icons.lock),
                     suffixIcon: IconButton(
                       color: Theme.of(context).colorScheme.primary,
                       icon: Icon(
@@ -168,19 +168,19 @@ class _SignupScreenState extends State<Signupscreen> {
                       },
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 16.0,
                   ),
                   LargeButton(onPressed: signup, text: "Sign Up"), //signup
-                  SizedBox(
+                  const SizedBox(
                     height: 6.0,
                   ),
-                  CustomDivider(text: "Or Sign Up With"),
-                  SizedBox(
+                  const CustomDivider(text: "Or Sign Up With"),
+                  const SizedBox(
                     height: 6.0,
                   ),
-                  ContinueWithGoogle(),
-                  Spacer(),
+                  const ContinueWithGoogle(),
+                  const Spacer(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -209,7 +209,7 @@ class _SignupScreenState extends State<Signupscreen> {
                       ),
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 18,
                   ),
                 ],

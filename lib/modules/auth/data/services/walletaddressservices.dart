@@ -61,7 +61,7 @@ class WalletProvider extends ChangeNotifier implements WalletAddressService {
     if (response.statusCode == 200) {
       return response.body;
     } else {
-      throw Exception('Failed to fetch balance');
+      return '';
     }
   }
 
@@ -141,7 +141,7 @@ class WalletProvider extends ChangeNotifier implements WalletAddressService {
 
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text(
             "Transaction successful!",
             style: TextStyle(color: Colors.green),
@@ -156,7 +156,7 @@ class WalletProvider extends ChangeNotifier implements WalletAddressService {
         SnackBar(
           content: Text(
             "Transaction failed: $e",
-            style: TextStyle(color: Colors.red),
+            style: const TextStyle(color: Colors.red),
           ),
         ),
       );
@@ -167,6 +167,7 @@ class WalletProvider extends ChangeNotifier implements WalletAddressService {
   Future<EthereumAddress> getPublicKey(String privateKey) async {
     //get public key aka address
     final privatekey = EthPrivateKey.fromHex(privateKey);
+    // ignore: await_only_futures
     final address = await privatekey.address;
     return address;
   }

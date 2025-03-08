@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
@@ -56,22 +58,23 @@ class _HomescreenState extends State<Homescreen> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         CircleAvatar(
-                          radius: 30, // Half of width/height (60/2)
+                          radius: 30,
+                          backgroundColor: Colors.grey.shade300,
                           backgroundImage: profileImage != null
                               ? NetworkImage(profileImage)
                               : null,
-                          backgroundColor:
-                              Colors.grey[300], // Fallback background color
-                          child: profileImage == null
-                              ? const Icon(Icons.person,
-                                  size: 40, color: Colors.grey)
+                          child: (profileImage == null && profileImage == null)
+                              ? const Icon(Icons.account_circle_outlined,
+                                  size: 100, color: Colors.white)
                               : null,
                         ),
                         const SizedBox(width: 16),
                         Text(
                           "Hello!!, $name",
-                          style: const TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.primary),
                         ),
                         // Container(
                         //   width: 50, // Set width

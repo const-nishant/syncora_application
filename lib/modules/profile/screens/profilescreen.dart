@@ -50,15 +50,14 @@ class _ProfilescreenState extends State<Profilescreen> {
     try {
       String uid = _auth.currentUser?.uid ?? "";
       if (uid.isEmpty) return;
-
-      final response = await _storage.createFile(
+      await _storage.createFile(
         bucketId: Configs.appWriteUserProfileStorageBucketId,
-        fileId: "unique()",
+        fileId: _auth.currentUser?.uid ?? "",
         file: InputFile.fromPath(path: imageFile.path),
       );
 
       String imageUrl =
-          "https://cloud.appwrite.io/v1/storage/buckets/your_bucket_id/files/${response.$id}/view?project=your_project_id";
+          'https://cloud.appwrite.io/v1/storage/buckets/${Configs.appWriteUserProfileStorageBucketId}/files/${_auth.currentUser!.uid}/view?project=${Configs.appWriteProjectId}&mode=admin';
 
       await _firestore.collection('users').doc(uid).update({
         'profileImage': imageUrl,
@@ -115,7 +114,10 @@ class _ProfilescreenState extends State<Profilescreen> {
 // Get balance safely
                 String balance =
                     Provider.of<WalletProvider>(context, listen: false)
-                            .getBalance(walletAddress, 'sepolia',)
+                            .getBalance(
+                              walletAddress,
+                              'sepolia',
+                            )
                             ?.toString() ??
                         '0';
 

@@ -81,7 +81,7 @@ class _LoginscreenState extends State<Loginscreen> {
                     controller: emailController,
                     keyboardType: TextInputType.emailAddress,
                     hintText: "Enter Your Email",
-                    prefixIcon: Icon(LucideIcons.mail),
+                    prefixIcon: const Icon(LucideIcons.mail),
                     obscureText: false,
                     readOnly: false,
                     focusNode: FocusNode(),
@@ -101,7 +101,7 @@ class _LoginscreenState extends State<Loginscreen> {
                         }
                         return null;
                       },
-                      prefixIcon: Icon(LucideIcons.lock),
+                      prefixIcon: const Icon(LucideIcons.lock),
                       suffixIcon: IconButton(
                         icon: Icon(
                           obscureText ? LucideIcons.eyeOff : LucideIcons.eye,
@@ -171,11 +171,11 @@ class _LoginscreenState extends State<Loginscreen> {
                   const SizedBox(
                     height: 10,
                   ),
-                  CustomDivider(text: "Or Continue with"),
+                  const CustomDivider(text: "Or Continue with"),
                   const SizedBox(
                     height: 10,
                   ),
-                  ContinueWithGoogle(),
+                  const ContinueWithGoogle(),
                   const SizedBox(
                     height: 10,
                   ),
@@ -207,7 +207,7 @@ class _LoginscreenState extends State<Loginscreen> {
                       ),
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 18,
                   )
                 ],
